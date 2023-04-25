@@ -1,0 +1,27 @@
+/* CSS for Header component
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8f8f8;
+    padding: 10px 20px;
+  }
+  
+  .header a {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .header h4 {
+    margin: 0;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .header h4:hover {
+    background-color: #0056b3;
+  }
+   */
