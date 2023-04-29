@@ -1,90 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const Categories = () => {
-  const [categories, setCategories] = useState([]);
-  const [remove, setRemove] = useState(false);
-  const [add, setAdd] = useState(false);
-  const [name, setName] = useState("");
-  const [error, setError] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+function AddCategory() {
+  const [category, setCategory] = useState({
+    name: ''
+  });
+  
 
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    fetch("http://localhost:5001/cat/categories", {
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch((err) => console.log(err));
-  }, [remove, add]);
-
-  const handleDelete = (id) => {
-    fetch(`http://localhost:5001/cat/delete`, {
-      method: "DELETE",
-      body: JSON.stringify({
-        id,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setSnackbarOpen(true);
-
-        setSnackbarMessage(data.message);
-
-        setRemove(!remove);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handleUpdate = () => {
-    fetch("http://localhost:5001/cat/update", {
-      method: "PUT",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const createCategory = async (e) => {
+  const handleCategory = async (e) => {
     e.preventDefault();
+   
+    const token = localStorage.getItem('token');
+    console.log (token)
+    if (!token) {
+      console.error('No token found in local storage');
+      return;
+    }
+   
     try {
-      if (!name) {
-        setError(true);
-        return;
-      }
-      const response = await fetch("http://localhost:5001/cat/new", {
-        method: "POST",
+      const response = await fetch('http://localhost:5001/cat/new', {
+        method: 'POST',
+     
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+          "Authorization":`${token}`
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(category),
       });
-
+      
       if (!response.ok) {
-        throw new Error("Error adding category", response.statusText);
+        throw new Error('Error adding category',response.statusText);
       }
 
       const data = await response.json();
       console.log(data);
 
-      setAdd(!add);
-      setName("");
-      setError(false);
-      setSnackbarOpen(true);
-      setSnackbarMessage("Category created");
+      setCategory({ name: '' });
     } catch (err) {
       console.error(err);
       // display error message to user
@@ -92,16 +43,21 @@ const Categories = () => {
   };
 
   return (
-    <>
-      {categories.map((category) => (
-        <div key={category.id}>
-          <p>{category.name}</p>
-          <button onClick={() => handleDelete(category.id)}>Delete</button>
-          <button onClick={() => handleUpdate()}>Edit</button>
-        </div>
-      ))}
-    </>
+    <div>
+      <form onSubmit={handleCategory}>
+        <label>
+          Category Name:
+          <input
+            type="text"
+            value={category.name}
+            onChange={(e) => setCategory({ name: e.target.value })}
+          />
+        </label>
+       
+        <button type="submit">Add Category</button>
+      </form>
+    </div>
   );
-};
+}
 
-export default Categories;
+export default AddCategory;

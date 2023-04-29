@@ -1,96 +1,66 @@
-import { BarsOutlined, ShoppingOutlined, AreaChartOutlined } from '@ant-design/icons';
-import { Menu, Switch } from 'antd';
-import { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom'; // import Link, Outlet, and useNavigate from react-router-dom
+// import React from "react";
+// import { Table, Tag, Space } from "antd";
+// import { Link } from "react-router-dom";
 
-function getItem(label, key, icon, children, type) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  };
-}
+// const Products = ({ products, deleteProduct }) => {
+//     console.log('barev');
+//   const columns = [
+//     {
+//       title: "Name",
+//       dataIndex: "name",
+//       key: "name",
+//       render: (text) => <span>{text}</span>,
+//     },
+//     {
+//       title: "Price",
+//       dataIndex: "price",
+//       key: "price",
+//     },
+//     {
+//       title: "Description",
+//       dataIndex: "description",
+//       key: "description",
+//     },
+//     {
+//       title: "Category",
+//       key: "category",
+//       dataIndex: "category",
+//       render: (_, product) => (
+//         <>
+//           {product.tags.map((tag) => {
+//             let color = tag.length > 5 ? "geekblue" : "green";
+//             if (tag === "loser") {
+//               color = "volcano";
+//             }
+//             return (
+//               <Tag color={color} key={tag}>
+//                 {tag.toUpperCase()}
+//               </Tag>
+//             );
+//           })}
+//         </>
+//       ),
+//     },
+//     {
+//       title: "Action",
+//       key: "action",
+//       render: (_, product) => (
+//         <Space size="middle">
+//           <Link to={`/updateProduct/${product.id}`}>Edit</Link>
+//           <span onClick={() => deleteProduct(product.id)}>Delete</span>
 
-const items = [
-  getItem('Categories', 'sub1', <BarsOutlined />, [
-    getItem('Add category', '1'),
-    getItem('Edit/Delete category', '2'),
-    getItem('Option 3', '3'),
-    getItem('Option 4', '4'),
-  ]),
-  getItem('Products', 'sub2', <ShoppingOutlined />, [
-    getItem('Add product', '5'),
-    getItem('Edit/Delete product', '6'),
-    getItem('Submenu', 'sub3', null, [
-      getItem('Option 7', '7'),
-      getItem('Option 8', '8'),
-    ]),
-  ]),
-  getItem('Statistics', 'sub4', <AreaChartOutlined />, [
-    getItem('Option 9', '9'),
-    getItem('Option 10', '10'),
-    getItem('Option 11', '11'),
-    getItem('Option 12', '12'),
-  ]),
-];
+//         </Space>
+        
+//       ),
+//     },
+//   ];
 
-const AdminPage = () => {
-  const [theme, setTheme] = useState('dark');
-  const [current, setCurrent] = useState('1');
-  const navigate = useNavigate(); // use useNavigate to get the navigate function
+//   return (
+//     <Table columns={columns} dataSource={products} />
+//   );
+// }
 
-  const changeTheme = (value) => {
-    setTheme(value ? 'dark' : 'light');
-  };
+// export default Products;
 
-  const onClick = (e) => {
-    console.log('click ', e);
-    setCurrent(e.key);
-  };
 
-  const handleProductClick = () => {
-    navigate('/products'); // navigate to the "Product" component
-  };
 
-  return (
-    <>
-      <Switch
-        checked={theme === 'dark'}
-        onChange={changeTheme}
-        checkedChildren="Dark"
-        unCheckedChildren="Light"
-      />
-      <br />
-      <br />
-      <Menu
-        theme={theme}
-        onClick={onClick}
-        style={{
-          width: 256,
-        }}
-        defaultOpenKeys={['sub1']}
-        selectedKeys={[current]}
-        mode="inline"
-      >
-        {items.map(item => (
-          <Menu.SubMenu key={item.key} title={item.label} icon={item.icon}>
-            {item.children.map(child => (
-              <Menu.Item key={child.key} icon={child.icon}>
-                {child.label === 'Edit/Delete product' ? (
-                  <div onClick={handleProductClick}>{child.label}</div>
-                ) : (
-                  <Link to="products"></Link>
-                )}
-              </Menu.Item>
-            ))}
-          </Menu.SubMenu>
-        ))}
-      </Menu>
-      <Outlet /> {/* Render nested routes */}
-    </>
-  );
-};
-
-export default AdminPage;
