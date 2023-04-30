@@ -109,7 +109,7 @@ function AdminPage() {
           maxWidth: "100%",
           boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
           borderRadius: "none",
-          backgroundColor:"black"
+          backgroundColor:"grey"
         }}
       >
         <MenuList sx={{ display: "flex", flexDirection: "column", gap: "20px", color:"white", marginRight: 20}}>

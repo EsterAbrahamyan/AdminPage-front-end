@@ -1,14 +1,9 @@
-
-
-
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-
+// import EditIcon from "@mui/icons-material/Edit";
 import { Typography, Box, TextField, IconButton, Snackbar, Button } from '@mui/material';
-
 import Alert from '@mui/material/Alert';
 
 const Root = styled("div")({
@@ -31,12 +26,14 @@ const Categories = () => {
     const [error, setError] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [active, setActive] = useState(true);
-    const [activeCategory, setActiveCategory] = useState(null);
-    const [editingCategoryId, setEditingCategoryId] = useState(null);
-    const [rename, setRename] = useState({ name: "" })
+    const [active, setActive] = useState(false);
+    const [rename, setRename] = useState({ name: "", id:"" })
     const [update, setUpdate] = useState(false)
-
+    const [activeCategory, setActiveCategory] = useState(null);
+    const [activeId, setActiveId] = useState(true);
+    const[notremove,setNotRemove]=useState("")
+    const[correct,setCorrect]=useState(false)
+    
 
 
     const token = localStorage.getItem("token")
@@ -51,10 +48,10 @@ const Categories = () => {
             .then((res) => res.json())
             .then((data) => setCategories(data))
             .catch((err) => console.log(err));
-    }, [remove, add, update]);
+    }, [remove, add, update, token]);
 
     const handleDelete = (id) => {
-        fetch(`http://localhost:5001/cat/delete/${id}`, {
+        fetch(`http://localhost:5001/cat/delete/&{id}`, {
             method: "DELETE",
             body: JSON.stringify({
                 id,
@@ -67,11 +64,15 @@ const Categories = () => {
             .then((res) => res.json())
             .then((data) => {
                 console.log(data)
+                if(data.error){
+                    setNotRemove(data.error)
+                    setCorrect(true)
+                }else{
                 setSnackbarOpen(true)
 
                 setSnackbarMessage(data.message)
 
-                setRemove(!remove)
+                setRemove(!remove)}
             })
             .catch((err) => console.log(err));
     };
@@ -80,13 +81,13 @@ const Categories = () => {
     const changeCategory = async (id) => {
 
 
-        fetch(`http://localhost:5001/cat/update/${id}`, {
+        fetch(`http://localhost:5001/cat/update`, {
           method: "PUT",
           headers: {
             "Content-type": "application/json; charset=UTF-8",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify(rename),
+          body: JSON.stringify({name:rename.name, id }),
         })
           .then((res) => res.json())
           .then((data) => {
@@ -133,6 +134,7 @@ const Categories = () => {
         }
     };
     console.log(rename);
+    
 
     return (
         <Root>
@@ -155,6 +157,7 @@ const Categories = () => {
                     error={!name && error}
 
                     helperText={!error ? null : "fill in the field"}
+                    
                 />
 
 
@@ -165,63 +168,70 @@ const Categories = () => {
 
 
             {categories.map((category) => (
-                <CategoryContainer key={category.id}>
-                    {/* <Typography variant="body1">  */}
-                    <TextField
-                        value={activeCategory === category.id ? rename.name : category.name}
-                        onChange={(e) =>{
-                            setRename((prevState) => ({
-                                ...prevState,
+    <CategoryContainer key={category.id}>
+        <TextField
+            value={
+                rename.id === category.id && rename.name.length >= 0
+                    ? rename.name
+                    : category.name
+            }
+            onChange={(e) => {
+                setRename({
+                    ...rename,
+                    name: e.target.value,
+                    id: category.id,
+                });
 
-                                name: e.target.value,
-                            }))
-                            
-                            e.preventDefault();
-                            e.stopPropagation()
-                        }}
-                        InputProps={{
-                            readOnly: !active || activeCategory !== category.id,
-                        }}
-                        helperText={
-                            editingCategoryId === category.id ? "Edit field" : null
-                        }
-                        onFocus={() => setEditingCategoryId(category.id)}
-                        onBlur={() => setEditingCategoryId(null)}
-                        onClick={(e) => 
-                            setActiveCategory(category.id)}
-                    />
+               e.preventDefault()
+            }}
+            error={ activeId===category.id && correct}
 
-                    <div>
-                        <IconButton aria-label="delete" onClick={() => handleDelete(category.id)}>
-                            <DeleteIcon />
-                        </IconButton>
-                        {activeCategory === category.id ? (
-                            <Button
-                                onClick={() => {
+            InputProps={{
+                readOnly: !active || activeCategory !== category.id,
+            }}
+            helperText={activeCategory === category.id ? "Edit Category" : (activeId === category.id && notremove ? true : null)}
 
-                                    setActiveCategory(null);
-                                    changeCategory(category.id)
+   
+        />
 
-                                }}
-                            >
-                                save
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={() => {
+        <div>
+            <IconButton
+                aria-label="delete"
+                onClick={() => {handleDelete(category.id)
+              setActiveId(category.id)
+                   
+            }}
+            >
+                <DeleteIcon />
+            </IconButton>
+            {activeCategory === category.id ? (
+                <Button
+                    onClick={(e) => {
+                        setActive(!active);
+                        setActiveCategory(null);
+                        changeCategory(category.id);
+                        setRename({ id: "", name: "" });
+                   
+                    }}
+                >
+                    save
+                </Button>
+            ) : (
+                <Button
+                    onClick={(e) => {
+                        setActiveCategory(category.id);
+                        setActive(!active);
+                    
+                    }}
+                    sx={{ cursor: "pointer" }}
+                >
+                    edit
+                </Button>
+            )}
+        </div>
+    </CategoryContainer>
+))}
 
-                                    setActive(!active)
-                                    setActiveCategory(category.id);
-                                }}
-
-                                sx={{ cursor: "pointer" }}
-                            >
-                                edit
-                            </Button>
-                        )}
-                    </div>
-                </CategoryContainer>
-            ))}
 
             <Snackbar open={snackbarOpen}
                 sx={{
@@ -238,5 +248,3 @@ const Categories = () => {
     );
 }
 export default Categories
-
-
