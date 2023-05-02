@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from "@mui/icons-material/Edit";
 import { Typography, Box, TextField, IconButton, Snackbar, Button } from '@mui/material';
 import Alert from '@mui/material/Alert';
 
@@ -130,7 +129,7 @@ const Categories = () => {
             setSnackbarMessage('Category created');
         } catch (err) {
             console.error(err);
-            // display error message to user
+           
         }
     };
     console.log(rename);

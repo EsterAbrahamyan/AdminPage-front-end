@@ -1,16 +1,10 @@
-
-// import Home from "./Components/Home"
 import Router from "./router/Index";
 
 
 function App() {
-
-  return (
+   return (
     <>
-
-      <Router />
-
-
+    <Router />
     </>
   )
 }

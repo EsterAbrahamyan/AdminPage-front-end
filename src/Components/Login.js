@@ -33,7 +33,7 @@ export default function Login() {
             if (data.user.role === 1 && token) {
 
                 Navigate('/adminpage')
-            } else { Navigate('/login') }
+            } else { Navigate('/profile') }
             setLogin({ email: "", password: "" });
          }
           catch (err) {

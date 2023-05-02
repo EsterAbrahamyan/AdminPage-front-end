@@ -1,5 +1,3 @@
-
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -12,20 +10,32 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import useProduct from "./productHooks/UseProduct";
+import IconButton from "@mui/material/IconButton";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
+
 
 function Products() {
   const [active, setActive] = useState(false);
   const [activeProductId, setActiveProductId] = useState(null);
   const {products, deleteProduct, editProduct} = useProduct()
+  
   const [edit, setEdit] = useState({
     name:"",
     description:"",
     price:"",
-    categoryId:""
+    categoryId:"",
+    image: null,
   })
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImageChange = (event) => {
+    const image = event.target.files[0];
+    setSelectedImage(image);
+  };
+
 
   console.log(edit);
 
@@ -67,8 +77,28 @@ function Products() {
                 >
                   <TableCell align="center">{product.name}</TableCell>
                   <TableCell align="center">
-                    <img  width="80px" />
-                  </TableCell>
+                  {selectedImage ? (
+      <img src={URL.createObjectURL(selectedImage)} width="80px" />
+    ) : (
+      <img src={product.image} width="80px" />
+    )}
+    <input
+      accept="image/*"
+      id={`image-upload-${product.id}`}
+      type="file"
+      style={{ display: "none" }}
+      onChange={handleImageChange}
+    />
+    <label htmlFor={`image-upload-${product.id}`}>
+      <IconButton
+        color="primary"
+        aria-label="upload picture"
+        component="span"
+      >
+        <PhotoCamera />
+      </IconButton>
+    </label>
+  </TableCell>
                   <TableCell align="center">{product.price}</TableCell>
                   <TableCell align="center">{product.description}</TableCell>
                    <TableCell align="center">{product.Category ? product.Category.name : ''}</TableCell> 

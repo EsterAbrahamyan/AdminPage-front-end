@@ -66,30 +66,27 @@ export default function Register() {
   });
 
   const handelRegister = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:5001/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(register)
-      });
-
-      const data = await response.json();
-      if (data.err) {
-        alert(data.err);
-      }
-      console.log(data);
-    } catch (err) {
-      console.log(err);
-    }
-    setRegister({ email: '', password: '' });
+    console.log('helo')
+    
+        try {
+          const response = await fetch("http://localhost:5001/user/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(register),
+          });
+          const data = await response.json();
+          console.log(data);
+        } catch (err) {
+          console.error(err);
+        }
+      
   };
-
+console.log(register)
   return (
     <div className="register-container">
-      <Form onSubmit={handelRegister} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ maxWidth: 600 }}>
+      <Form onFinish={handelRegister} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} style={{ maxWidth: 600 }}>
         <Form.Item
           label="Email"
           name="email"
