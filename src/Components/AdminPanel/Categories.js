@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Typography, Box, TextField, IconButton, Snackbar, Button } from '@mui/material';
-import Alert from '@mui/material/Alert';
+import {Alert,AlertTitle} from '@mui/material';
 
 const Root = styled("div")({
     margin: "2rem",
@@ -32,7 +32,7 @@ const Categories = () => {
     const [activeId, setActiveId] = useState(true);
     const[notremove,setNotRemove]=useState("")
     const[correct,setCorrect]=useState(false)
-    
+    const [snackbarStatus, setSnackbarStatus] = useState('');
 
 
     const token = localStorage.getItem("token")
@@ -65,18 +65,20 @@ const Categories = () => {
                 console.log(data)
                 if(data.error){
                     setNotRemove(data.error)
+                    
                     setCorrect(true)
                 }else{
                 setSnackbarOpen(true)
 
                 setSnackbarMessage(data.message)
+                setSnackbarStatus(data.status)
 
                 setRemove(!remove)}
             })
             .catch((err) => console.log(err));
     };
 
-
+console.log(snackbarStatus)
     const changeCategory = async (id) => {
 
 
@@ -237,10 +239,16 @@ const Categories = () => {
                     marginRight: "250px",
                     marginTop: "50px"
                 }}
-                autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
-                <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+                autoHideDuration={3000} onClose={() => setSnackbarOpen(false)}>
+
+                {snackbarStatus ? (<Alert onClose={() => setSnackbarOpen(false)} severity="error">
+  <AlertTitle>Error</AlertTitle>
+  {snackbarStatus}  <strong>check it out!</strong>
+</Alert>):(<Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
                     {snackbarMessage}
-                </Alert>
+                </Alert>)
+
+                }
             </Snackbar>
 
         </Root>

@@ -58,13 +58,17 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import './Register.css';
+import { useNavigate } from 'react-router-dom';
 
-export default function Register() {
+
+
+export default function Register({active, setActive}) {
   const [register, setRegister] = useState({
     email: '',
     password: ''
   });
-
+ const navigate = useNavigate ()
+ console.log(active)
   const handelRegister = async (e) => {
     console.log('helo')
     
@@ -78,7 +82,13 @@ export default function Register() {
           });
           const data = await response.json();
           console.log(data);
-        } catch (err) {
+          if (data) {
+            setActive (!active)
+            navigate('/login')
+            
+        }
+        } 
+         catch (err) {
           console.error(err);
         }
       
